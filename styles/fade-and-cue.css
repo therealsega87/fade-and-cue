@@ -1,0 +1,234 @@
+/* ---------- Transition overlay ---------- */
+
+#fade-and-cue-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2rem;
+  color: #ffffff;
+  font-size: 48px;
+  text-align: center;
+  /* Fallback for text with no font chosen in the editor. */
+  font-family: Signika, sans-serif;
+}
+
+/* Background layer: color and media together, so opacity and masks apply to both. */
+#fade-and-cue-overlay .fade-and-cue-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+
+/* Soft edges: solid in the middle, transparent at the borders. */
+#fade-and-cue-overlay .fade-and-cue-backdrop.is-soft-edges {
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
+  mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
+}
+
+/* Vignette: transparent in the middle, solid at the borders. */
+#fade-and-cue-overlay .fade-and-cue-backdrop.is-vignette {
+  -webkit-mask-image: radial-gradient(ellipse at center, transparent 30%, #000 100%);
+  mask-image: radial-gradient(ellipse at center, transparent 30%, #000 100%);
+}
+
+#fade-and-cue-overlay .fade-and-cue-text {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  line-height: 1.3;
+  white-space: pre-wrap;
+}
+
+#fade-and-cue-overlay p {
+  margin: 0.3em 0;
+}
+
+#fade-and-cue-overlay p:first-child {
+  margin-top: 0;
+}
+
+#fade-and-cue-overlay p:last-child {
+  margin-bottom: 0;
+}
+
+/* Visible only while the mouse is over the button itself. */
+#fade-and-cue-overlay .fade-and-cue-skip {
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#fade-and-cue-overlay .fade-and-cue-skip:hover {
+  opacity: 1;
+}
+
+/* ---------- Shared ---------- */
+
+.fade-and-cue-hidden {
+  display: none !important;
+}
+
+.fade-and-cue-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-right: 1rem;
+}
+
+/* ---------- Editor window ---------- */
+
+/* 750 x 750 at most (never taller than the screen); the content scrolls beyond that. */
+.application.fade-and-cue-editor {
+  max-height: min(750px, 90vh);
+}
+
+.application.fade-and-cue-editor .window-content {
+  overflow-y: auto;
+}
+
+.fade-and-cue-editor .fade-and-cue-header,
+.fade-and-cue-editor nav.tabs,
+.fade-and-cue-editor .tab {
+  margin-bottom: 0.75rem;
+}
+
+.fade-and-cue-editor .form-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.fade-and-cue-editor .form-footer button {
+  flex: 0 1 auto;
+}
+
+/* ---------- Text editor ---------- */
+
+.fade-and-cue-prosemirror-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Only the editing area's colors; Foundry styles the rest of the editor. */
+fade-and-cue-prose-mirror .editor-content.ProseMirror {
+  background: #efe6d8;
+  color: #1a1a1a;
+  padding: 8px;
+  border-radius: 0 0 4px 4px;
+}
+
+/* Background media fades in once it has loaded, so a late download looks intentional. */
+#fade-and-cue-overlay .fade-and-cue-media {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+#fade-and-cue-overlay .fade-and-cue-media.is-ready {
+  opacity: 1;
+}
+
+.fade-and-cue-scene-warning,
+.fade-and-cue-delay-warning {
+  color: #d9a441;
+}
+
+/* ---------- Sidebar tab ----------
+ * Layout comes from Foundry's own "directory flexcol" classes on the tab.
+ */
+
+.fade-and-cue-sidebar-tab .directory-footer button {
+  width: 100%;
+}
+
+.fade-and-cue-sidebar-tab .header-actions button {
+  flex: 1 1 0;
+}
+
+/* One row: a dark bar, name centered, like the Scenes tab without a thumbnail. */
+.fade-and-cue-sidebar-tab .directory-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  gap: 0;
+  cursor: pointer;
+}
+
+.fade-and-cue-sidebar-tab .directory-item .entry-name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  cursor: pointer;
+}
+
+.fade-and-cue-sidebar-tab .fade-and-cue-row-actions {
+  display: flex;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.fade-and-cue-sidebar-tab .fade-and-cue-empty {
+  padding: 8px;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.fade-and-cue-sidebar-tab .fade-and-cue-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+fade-and-cue-prose-mirror .editor-menu > li.fade-and-cue-divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  width: 1px;
+  margin: 4px 6px;
+  background: var(--color-border-light-tertiary, rgba(255, 255, 255, 0.25));
+  list-style: none;
+}
+
+fade-and-cue-prose-mirror .editor-menu {
+  flex-wrap: wrap;
+}
+
+/* ---------- Diagnostics window ---------- */
+
+.fade-and-cue-diagnostics .fade-and-cue-diagnostics-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.fade-and-cue-diagnostics textarea {
+  flex: 1 1 auto;
+  min-height: 0;
+  resize: none;
+  font-family: monospace;
+  font-size: 12px;
+  white-space: pre;
+}

@@ -1,0 +1,86 @@
+<section class="tab standard-form {{tab.cssClass}}" data-group="primary" data-tab="background">
+  <div class="form-group">
+    <label>{{localize "FADECUE.Editor.BackgroundTypeLabel"}}</label>
+    <div class="form-fields">
+      <select name="background.type">
+        {{selectOptions backgroundTypes selected=transition.background.type}}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group fade-and-cue-bg-color">
+    <label>{{localize "FADECUE.Editor.BackgroundColorLabel"}}</label>
+    <div class="form-fields">
+      <color-picker name="background.color" value="{{transition.background.color}}"></color-picker>
+    </div>
+  </div>
+
+  <div class="form-group fade-and-cue-bg-media">
+    <label>{{localize "FADECUE.Editor.BackgroundMediaLabel"}}</label>
+    <div class="form-fields">
+      <file-picker name="background.src" type="imagevideo" value="{{transition.background.src}}"></file-picker>
+    </div>
+  </div>
+
+  <div class="form-group fade-and-cue-bg-media">
+    <label>{{localize "FADECUE.Editor.BackgroundSizeLabel"}}</label>
+    <div class="form-fields">
+      <select name="background.size">
+        {{selectOptions backgroundSizes selected=transition.background.size}}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group fade-and-cue-bg-video">
+    <label>{{localize "FADECUE.Editor.BackgroundVideoOptionsLabel"}}</label>
+    <div class="form-fields">
+      <label class="fade-and-cue-checkbox">
+        <input type="checkbox" name="background.loop" {{#if transition.background.loop}}checked{{/if}} />
+        {{localize "FADECUE.Editor.LoopLabel"}}
+      </label>
+      <label class="fade-and-cue-checkbox">
+        <input type="checkbox" name="background.muted" {{#if transition.background.muted}}checked{{/if}} />
+        {{localize "FADECUE.Editor.MutedLabel"}}
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "FADECUE.Editor.BackgroundOpacityLabel"}}</label>
+    <div class="form-fields">
+      <range-picker name="background.opacity" value="{{transition.background.opacity}}" min="0" max="1" step="0.05"></range-picker>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "FADECUE.Editor.BackgroundEffectLabel"}}</label>
+    <div class="form-fields">
+      <select name="background.effect">
+        {{selectOptions backgroundEffects selected=transition.background.effect}}
+      </select>
+    </div>
+    <p class="hint">{{localize "FADECUE.Editor.BackgroundEffectHint"}}</p>
+    <p class="hint fade-and-cue-scene-warning fade-and-cue-hidden">{{localize "FADECUE.Editor.SceneWarning"}}</p>
+  </div>
+
+  <div class="form-group">
+    <label>{{localize "FADECUE.Editor.AudioLabel"}}</label>
+    <div class="form-fields">
+      <file-picker name="audio.src" type="audio" value="{{transition.audio.src}}"></file-picker>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label></label>
+    <div class="form-fields">
+      <label class="fade-and-cue-checkbox">
+        <input type="checkbox" name="audio.loop" {{#if transition.audio.loop}}checked{{/if}} />
+        {{localize "FADECUE.Editor.LoopLabel"}}
+      </label>
+      <label class="fade-and-cue-checkbox">
+        <input type="checkbox" name="timing.autoMatchAudio" {{#if transition.timing.autoMatchAudio}}checked{{/if}} />
+        {{localize "FADECUE.Editor.AutoMatchAudioLabel"}}
+      </label>
+    </div>
+  </div>
+</section>
