@@ -131,6 +131,15 @@
   width: 100%;
 }
 
+/* The editor's toolbar and text area are absolutely positioned, so the editor gets its
+   width only from its container. Set it on the editor itself, which holds even when
+   another module changes the container's align-items. */
+.fade-and-cue-prosemirror-group > fade-and-cue-prose-mirror {
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+}
+
 /* Only the editing area's colors; Foundry styles the rest of the editor. */
 fade-and-cue-prose-mirror .editor-content.ProseMirror {
   background: #efe6d8;

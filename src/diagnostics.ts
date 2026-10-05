@@ -139,14 +139,69 @@ function interfaceChecks(): Check[] {
   return checks;
 }
 
-/** Builds a hidden editor, reads its toolbar, then removes it. */
+/** CSS rules from other modules' stylesheets that match the given elements. */
+function foreignCssRules(elements: Record<string, Element | null>): string[] {
+  const lines: string[] = [];
+  const walk = (rules: CSSRuleList, source: string, name: string, el: Element) => {
+    for (const rule of Array.from(rules)) {
+      const style = rule as CSSStyleRule;
+      if (!style.selectorText && (rule as CSSGroupingRule).cssRules) {
+        walk((rule as CSSGroupingRule).cssRules, source, name, el);
+        continue;
+      }
+      if (!style.selectorText) continue;
+      let matches = false;
+      try {
+        matches = el.matches(style.selectorText);
+      } catch {
+        continue;
+      }
+      if (matches) lines.push(`  ${name} <- ${source}: ${style.selectorText.slice(0, 140)} { ${style.style.cssText.slice(0, 140)} }`);
+    }
+  };
+  for (const sheet of Array.from(document.styleSheets)) {
+    const path = (sheet.href ?? '').split('/modules/')[1];
+    if (!path || path.startsWith(`${MODULE_ID}/`)) continue;
+    let rules: CSSRuleList;
+    try {
+      rules = sheet.cssRules;
+    } catch {
+      continue;
+    }
+    for (const [name, el] of Object.entries(elements)) if (el) walk(rules, path.split('/')[0], name, el);
+  }
+  return lines;
+}
+
+/** Position of the Fade & Cue tab in the sidebar as drawn on screen. */
+function drawnTabCheck(): Check[] {
+  const tabs = [...new Set(Array.from(document.querySelectorAll<HTMLElement>('#sidebar-tabs [data-tab]')).map((el) => el.dataset.tab ?? ''))];
+  const index = tabs.indexOf(MODULE_ID);
+  if (index < 0) return [{ status: 'WARN', text: 'Sidebar tab not found among the drawn tabs' }];
+  const before = index > 0 ? tabs[index - 1] : '(first)';
+  if (before === 'scenes') return [{ status: 'OK', text: 'Sidebar tab drawn after "scenes"' }];
+  return [
+    {
+      status: 'WARN',
+      text: `Sidebar tab drawn after "${before}": another module reorders the sidebar tabs (Carolingian UI does when its tab order has been customized)`,
+    },
+  ];
+}
+
+/**
+ * Builds a hidden editor inside the same structure as the editor window, then checks
+ * its toolbar buttons and its shape. On a broken shape, lists other modules' CSS rules
+ * that apply to it.
+ */
 async function editorCheck(): Promise<Check[]> {
-  const host = document.createElement('div');
+  const host = document.createElement('form');
+  host.className = 'application fade-and-cue-editor';
   Object.assign(host.style, { position: 'fixed', left: '-10000px', top: '0', width: '750px', visibility: 'hidden' });
-  const editor = document.createElement(PROSE_MIRROR_TAG);
-  editor.setAttribute('name', 'diagnostics');
-  host.appendChild(editor);
+  host.innerHTML = `<section class="window-content"><section class="tab standard-form active">
+    <div class="form-group fade-and-cue-prosemirror-group"><label>Text</label><${PROSE_MIRROR_TAG} name="diagnostics"></${PROSE_MIRROR_TAG}><p class="hint">Hint</p></div>
+  </section></section>`;
   document.body.appendChild(host);
+  const editor = host.querySelector<HTMLElement>(PROSE_MIRROR_TAG)!;
 
   try {
     let menu: HTMLElement | null = null;
@@ -157,18 +212,45 @@ async function editorCheck(): Promise<Check[]> {
       await wait(50);
     }
     if (!menu) return [{ status: 'ERROR', text: 'Editor toolbar: not drawn within 3 s' }];
+    await wait(50);
 
+    const checks: Check[] = [];
     const order = readToolbarOrder(menu);
     const expected = toolbarOrder().join(' ');
     const actual = order.join(' ');
-    return [
-      {
-        status: actual === expected ? 'OK' : 'ERROR',
-        text: actual === expected ? `Editor toolbar: ${order.filter((k) => k !== '|').length} buttons, order correct` : `Editor toolbar order differs. Expected: ${expected} · Found: ${actual}`,
-      },
-    ];
+    checks.push({
+      status: actual === expected ? 'OK' : 'ERROR',
+      text: actual === expected ? `Editor toolbar: ${order.filter((k) => k !== '|').length} buttons, order correct` : `Editor toolbar order differs. Expected: ${expected} · Found: ${actual}`,
+    });
+
+    const group = editor.parentElement!;
+    const content = editor.querySelector<HTMLElement>('.editor-content');
+    const size = (el: Element | null) => {
+      const box = el?.getBoundingClientRect();
+      return { w: Math.round(box?.width ?? 0), h: Math.round(box?.height ?? 0) };
+    };
+    const g = size(group);
+    const e = size(editor);
+    const m = size(menu);
+    const c = size(content);
+    const itemHeight = Math.max(...Array.from(menu.children).map((li) => li.getBoundingClientRect().height), 1);
+    const problems: string[] = [];
+    if (e.w < g.w * 0.9) problems.push('editor narrower than its container');
+    if (m.h > itemHeight * 2.5) problems.push('toolbar wraps onto many rows');
+    if (c.h < 40 || c.w < e.w * 0.5) problems.push('text area too small');
+    const shape = `editor ${e.w}x${e.h} in ${g.w}px, toolbar ${m.w}x${m.h}, text area ${c.w}x${c.h}`;
+
+    if (problems.length === 0) {
+      checks.push({ status: 'OK', text: `Editor layout: ${shape}` });
+    } else {
+      checks.push({ status: 'ERROR', text: `Editor layout broken (${problems.join('; ')}): ${shape}` });
+      const rules = foreignCssRules({ container: group, editor, toolbar: menu, 'text area': content });
+      checks.push({ status: 'INFO', text: rules.length ? 'Other modules\' CSS rules on the editor:' : 'No other module\'s CSS rules found on the editor' });
+      for (const line of rules) checks.push({ status: 'INFO', text: line });
+    }
+    return checks;
   } catch (err) {
-    return [{ status: 'ERROR', text: `Editor toolbar: could not build a test editor (${err instanceof Error ? err.message : String(err)})` }];
+    return [{ status: 'ERROR', text: `Editor check: could not build a test editor (${err instanceof Error ? err.message : String(err)})` }];
   } finally {
     host.remove();
   }
@@ -274,7 +356,7 @@ export async function runDiagnostics(): Promise<DiagnosticsReport> {
       { title: 'Compatibility', checks: compatibilityChecks() },
       { title: 'Modules', checks: moduleChecks() },
       { title: 'Settings', checks: settingsChecks() },
-      { title: 'Interface', checks: [...interfaceChecks(), ...(await editorCheck())] },
+      { title: 'Interface', checks: [...interfaceChecks(), ...drawnTabCheck(), ...(await editorCheck())] },
       { title: 'Transitions', checks: await transitionChecks() },
       { title: 'Audio', checks: await audioChecks() },
       { title: 'Errors', checks: errorChecks() },

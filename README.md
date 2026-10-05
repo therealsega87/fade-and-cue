@@ -119,6 +119,10 @@ Fade & Cue stores your library in your GM user account. Players never receive it
 
 The report lists versions, active modules and the result of each check. It leaves out the names and text of your transitions. You can also run it from the console with `game.modules.get('fade-and-cue').api.diagnose()`.
 
+## Other modules
+
+**Carolingian UI** lets you hide and reorder sidebar tabs. If you saved a custom order before installing Fade & Cue, the Fade & Cue tab shows up at the end of the list. Move it where you want from Carolingian UI's sidebar settings.
+
 ## Foundry v13
 
 The v13 text editor has no font size or text color tools, so Fade & Cue adds its own two buttons on v13. Text you style on v13 looks the same on v14, and the other way round.

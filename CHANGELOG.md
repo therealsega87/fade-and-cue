@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1
+
+- Fixed: with Carolingian UI, the text editor collapsed to zero width, with the toolbar buttons stacked in a column and no text area.
+- Diagnostics: builds the test editor inside the same structure as the editor window, checks its shape, and lists other modules' CSS rules that affect it when the shape is wrong.
+- Diagnostics: checks where the sidebar tab is drawn on screen and warns when another module moves it.
+
 ## 0.9.0
 
 First test release.

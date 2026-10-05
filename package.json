@@ -1,6 +1,6 @@
 {
   "name": "fade-and-cue",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Full-screen cinematic transitions with text, images, video and audio, sent by the GM to every player.",
   "type": "module",
   "author": "therealsega87",
