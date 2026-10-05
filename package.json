@@ -1,0 +1,21 @@
+{
+  "name": "fade-and-cue",
+  "version": "0.9.0",
+  "description": "Full-screen cinematic transitions with text, images, video and audio, sent by the GM to every player.",
+  "type": "module",
+  "author": "therealsega87",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/therealsega87/fade-and-cue.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "fvtt-types": "npm:@league-of-foundry-developers/foundry-vtt-types@14.366.0-beta.20261001000223",
+    "typescript": "^5.6.0"
+  },
+  "private": true
+}

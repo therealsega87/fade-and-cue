@@ -1,0 +1,39 @@
+{
+  "id": "fade-and-cue",
+  "title": "Fade & Cue",
+  "description": "Full-screen cinematic transitions with text, images, video and audio, sent by the GM to every player.",
+  "version": "0.9.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14.368"
+  },
+  "authors": [
+    {
+      "name": "therealsega87",
+      "url": "https://github.com/therealsega87",
+      "flags": {
+        "ko-fi": "https://ko-fi.com/therealsega"
+      }
+    }
+  ],
+  "url": "https://github.com/therealsega87/fade-and-cue",
+  "manifest": "https://github.com/therealsega87/fade-and-cue/releases/latest/download/module.json",
+  "download": "https://github.com/therealsega87/fade-and-cue/releases/download/v0.9.0/fade-and-cue.zip",
+  "bugs": "https://github.com/therealsega87/fade-and-cue/issues",
+  "readme": "https://github.com/therealsega87/fade-and-cue/blob/main/README.md",
+  "changelog": "https://github.com/therealsega87/fade-and-cue/blob/main/CHANGELOG.md",
+  "license": "LICENSE",
+  "esmodules": [
+    "dist/main.js"
+  ],
+  "styles": [
+    "styles/fade-and-cue.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ]
+}
