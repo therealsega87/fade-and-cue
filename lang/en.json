@@ -1,0 +1,155 @@
+{
+  "FADECUE": {
+    "Sidebar": {
+      "Title": "Fade & Cue",
+      "Tooltip": "Fade & Cue",
+      "SearchPlaceholder": "Search",
+      "CopySuffix": "(copy)",
+      "DeleteAll": {
+        "Button": "Delete all transitions",
+        "Title": "Delete all transitions",
+        "ConfirmBody": "Delete all {count} transitions? This cannot be undone.",
+        "Done": "All transitions deleted."
+      },
+      "Menu": {
+        "Edit": "Edit",
+        "Duplicate": "Duplicate",
+        "ChangeColor": "Change color",
+        "Export": "Export",
+        "Delete": "Delete",
+        "DeleteConfirm": "Delete the transition \"{name}\"? This cannot be undone.",
+        "ColorTitle": "Row color",
+        "ColorLabel": "Color",
+        "ColorApply": "Apply",
+        "ColorReset": "Reset to default",
+        "Cancel": "Cancel"
+      }
+    },
+    "DefaultTransitionName": "New Transition",
+    "Editor": {
+      "Title": "Fade & Cue — Edit Transition",
+      "NameLabel": "Transition name",
+      "AnimationTypeLabel": "Animation type",
+      "DirectionLabel": "Direction (used only by Slide and Wipe)",
+      "ContentLabel": "Displayed text",
+      "BackgroundTypeLabel": "Background type",
+      "BackgroundColorLabel": "Background color",
+      "BackgroundMediaLabel": "Image/video file",
+      "BackgroundSizeLabel": "Image fit",
+      "BackgroundOpacityLabel": "Background opacity",
+      "BackgroundEffectLabel": "Background effect",
+      "BackgroundEffectHint": "Fade away: the background fades out while the text stays; its delay and duration are in the Timing tab. Soft edges: the background turns transparent toward the borders. Vignette: the background is transparent in the middle and solid at the borders.",
+      "SceneWarning": "This transition has a see-through background and changes scene, so players can see the map change behind it.",
+      "BackgroundVideoOptionsLabel": "Video options",
+      "LoopLabel": "Loop",
+      "MutedLabel": "Muted",
+      "AudioLabel": "Background audio (optional)",
+      "TimingLegend": "Timing (milliseconds, 1000 = 1 second)",
+      "FadeInLabel": "Fade in",
+      "HoldLabel": "Hold on screen",
+      "FadeOutLabel": "Fade out",
+      "FadeAwayDelayLabel": "Fade away delay",
+      "FadeAwayDurationLabel": "Fade away duration",
+      "FadeAwayHint": "The background starts fading this long after the screen is covered. The hold is extended if needed, so the fade finishes before the text leaves.",
+      "SceneLabel": "Activate scene (optional)",
+      "SceneNone": "— None (don't change scene) —",
+      "SceneNoFolder": "No folder",
+      "OpenScenes": "Open Foundry's scene directory",
+      "PreviewButton": "Preview",
+      "SaveButton": "Save",
+      "SavedNotification": "Fade & Cue: transition \"{name}\" saved.",
+      "AllowSkipLabel": "Players can skip this transition",
+      "AutoMatchAudioLabel": "Match hold time to audio length",
+      "ContentHint": "Select some text, then use the toolbar to format it.",
+      "Bold": "Bold",
+      "Italic": "Italic",
+      "Underline": "Underline",
+      "Strikethrough": "Strikethrough",
+      "SceneDelayWarning": "The scene change delay (set in the module settings) is longer than the hold time: the transition will end before the scene changes, and players will see the switch.",
+      "FontColor": "Font color",
+      "FontSize": "Font size",
+      "FontSizeLabel": "Size (pixels)",
+      "SelectTextFirst": "Select some text first."
+    },
+    "AnimationType": {
+      "Fade": "Fade",
+      "Slide": "Slide",
+      "Wipe": "Wipe"
+    },
+    "Direction": {
+      "Left": "Left",
+      "Right": "Right",
+      "Up": "Up",
+      "Down": "Down"
+    },
+    "BackgroundType": {
+      "Color": "Color",
+      "Image": "Image",
+      "Video": "Video"
+    },
+    "BackgroundSize": {
+      "Cover": "Fill (cover)",
+      "Contain": "Fit (contain)",
+      "Auto": "Original size"
+    },
+    "BackgroundEffect": {
+      "None": "None",
+      "FadeOut": "Fade away",
+      "SoftEdges": "Soft edges",
+      "Vignette": "Vignette"
+    },
+    "Directory": {
+      "NewButton": "New transition",
+      "Empty": "No transitions saved yet. Create one with the button above.",
+      "PreviewTooltip": "Preview (only on your screen)",
+      "BroadcastTooltip": "Send to all players",
+      "DeleteConfirmTitle": "Delete transition"
+    },
+    "Tabs": {
+      "animation": "Animation",
+      "text": "Text",
+      "background": "Background",
+      "timing": "Timing"
+    },
+    "Settings": {
+      "Debug": {
+        "Name": "Enable debug logging",
+        "Hint": "Writes detailed information to the browser console (F12) for you and your players, to help troubleshooting. Player consoles show only each transition's title, never its content. Leave it off during normal play."
+      },
+      "Volume": {
+        "Name": "Default audio volume",
+        "Hint": "Base volume (0 to 1) for transition audio. Each user's own Music volume applies on top."
+      },
+      "SceneDelay": {
+        "Name": "Scene change delay (ms)",
+        "Hint": "How long after the screen is fully covered the GM's client switches to the linked scene. Raise it if players sometimes see the map change before the transition covers their screen."
+      },
+      "Diagnostics": {
+        "Name": "Diagnostics",
+        "Label": "Run diagnostics",
+        "Hint": "Checks the module and its setup, then shows a report to attach to bug reports. Nothing is changed."
+      }
+    },
+    "GMOnly": "Fade & Cue: only the GM can send transitions to players.",
+    "Io": {
+      "ImportButton": "Import",
+      "InvalidFile": "Fade & Cue: that file isn't a transition Fade & Cue can read.",
+      "ImportedOk": "Imported \"{name}\".",
+      "ImportedWithWarning": "Imported \"{name}\" — some referenced files are missing, see the chat message for details.",
+      "MissingAssetsIntro": "Fade & Cue: importing \"{name}\" went fine, but the following could not be found on this server:",
+      "KindImage": "Image",
+      "KindVideo": "Video",
+      "KindAudio": "Audio"
+    },
+    "TransitionNotFound": "Fade & Cue: that transition could not be found (it may have just been deleted).",
+    "Diagnostics": {
+      "Title": "Fade & Cue — Diagnostics",
+      "Intro": "Read-only checks: nothing is saved, sent or changed. Copy or download the report and attach it to your bug report.",
+      "Copy": "Copy",
+      "Download": "Download .txt",
+      "Playback": "Run playback test",
+      "Rerun": "Run again",
+      "Copied": "Diagnostics report copied to the clipboard."
+    }
+  }
+}

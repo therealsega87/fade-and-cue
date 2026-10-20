@@ -1,0 +1,73 @@
+<section class="tab standard-form {{tab.cssClass}}" data-group="primary" data-tab="timing">
+  <fieldset>
+    <legend>{{localize "FADECUE.Editor.TimingLegend"}}</legend>
+
+    <div class="form-group">
+      <label>{{localize "FADECUE.Editor.FadeInLabel"}}</label>
+      <div class="form-fields">
+        <input type="number" name="timing.fadeIn" value="{{transition.timing.fadeIn}}" min="0" step="100" />
+      </div>
+    </div>
+
+    <div class="form-group fade-and-cue-hold">
+      <label>{{localize "FADECUE.Editor.HoldLabel"}}</label>
+      <div class="form-fields">
+        <input type="number" name="timing.hold" value="{{transition.timing.hold}}" min="0" step="100" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>{{localize "FADECUE.Editor.FadeOutLabel"}}</label>
+      <div class="form-fields">
+        <input type="number" name="timing.fadeOut" value="{{transition.timing.fadeOut}}" min="0" step="100" />
+      </div>
+    </div>
+
+    <div class="form-group fade-and-cue-fadeaway">
+      <label>{{localize "FADECUE.Editor.FadeAwayDelayLabel"}}</label>
+      <div class="form-fields">
+        <input type="number" name="timing.fadeAwayDelay" value="{{transition.timing.fadeAwayDelay}}" min="0" step="100" />
+      </div>
+    </div>
+
+    <div class="form-group fade-and-cue-fadeaway">
+      <label>{{localize "FADECUE.Editor.FadeAwayDurationLabel"}}</label>
+      <div class="form-fields">
+        <input type="number" name="timing.fadeAwayDuration" value="{{transition.timing.fadeAwayDuration}}" min="0" step="100" />
+      </div>
+      <p class="hint">{{localize "FADECUE.Editor.FadeAwayHint"}}</p>
+    </div>
+  </fieldset>
+
+  <div class="form-group">
+    <label>{{localize "FADECUE.Editor.SceneLabel"}}</label>
+    <div class="form-fields">
+      <select name="behavior.sceneId">
+        <option value="">{{localize "FADECUE.Editor.SceneNone"}}</option>
+        {{#each sceneGroups as |group|}}
+        <optgroup label="{{group.folder}}">
+          {{#each group.scenes as |s|}}
+          <option value="{{s.id}}">{{s.name}}</option>
+          {{/each}}
+        </optgroup>
+        {{/each}}
+      </select>
+      <button type="button" data-action="openScenes" title="{{localize 'FADECUE.Editor.OpenScenes'}}">
+        <i class="fa-solid fa-folder-open"></i>
+      </button>
+    </div>
+  </div>
+
+  <p class="hint fade-and-cue-scene-warning fade-and-cue-hidden">{{localize "FADECUE.Editor.SceneWarning"}}</p>
+  <p class="hint fade-and-cue-delay-warning fade-and-cue-hidden">{{localize "FADECUE.Editor.SceneDelayWarning"}}</p>
+
+  <div class="form-group">
+    <label></label>
+    <div class="form-fields">
+      <label class="fade-and-cue-checkbox">
+        <input type="checkbox" name="behavior.allowSkip" {{#if transition.behavior.allowSkip}}checked{{/if}} />
+        {{localize "FADECUE.Editor.AllowSkipLabel"}}
+      </label>
+    </div>
+  </div>
+</section>

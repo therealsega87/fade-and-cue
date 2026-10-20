@@ -1,0 +1,17 @@
+<ol class="directory-list plain">
+  {{#each transitions as |t|}}
+  <li class="directory-item entry document" data-entry-id="{{t.id}}"{{#if t.rowColor}} style="background: {{t.rowBackground}};"{{/if}}>
+    <a class="entry-name" data-action="edit">{{t.name}}</a>
+    <div class="fade-and-cue-row-actions">
+      <a data-action="preview" data-tooltip="" aria-label="{{localize 'FADECUE.Directory.PreviewTooltip'}}">
+        <i class="fa-solid fa-eye"></i>
+      </a>
+      <a data-action="broadcast" data-tooltip="" aria-label="{{localize 'FADECUE.Directory.BroadcastTooltip'}}">
+        <i class="fa-solid fa-tower-broadcast"></i>
+      </a>
+    </div>
+  </li>
+  {{else}}
+  <li class="fade-and-cue-empty">{{localize "FADECUE.Directory.Empty"}}</li>
+  {{/each}}
+</ol>
