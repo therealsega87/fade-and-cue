@@ -1,3 +1,5 @@
+![Downloads](https://img.shields.io/github/downloads/therealsega87/fade-and-cue/total?style=flat-square)
+
 # Fade & Cue
 
 Full-screen transitions with text, images, video and audio, sent by the GM to every player.
