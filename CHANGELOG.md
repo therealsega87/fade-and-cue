@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+First public release. Same features as 0.9.1, with the source code cleaned up.
+
 ## 0.9.1
 
 - Fixed: with Carolingian UI, the text editor collapsed to zero width, with the toolbar buttons stacked in a column and no text area.

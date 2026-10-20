@@ -6,10 +6,6 @@ import { refreshSidebarTab } from '../sidebar-tab.js';
 
 const SETTING_KEY = 'transitions';
 
-/**
- * The transition library is a "user" setting of the GM who builds it: world settings are
- * sent to every client, so players could read upcoming transitions from the console.
- */
 export function registerTransitionStorage(): void {
   game.settings!.register(MODULE_ID, SETTING_KEY, {
     name: 'Fade & Cue - Transitions',
@@ -21,7 +17,6 @@ export function registerTransitionStorage(): void {
   });
 }
 
-/** The stored entries exactly as saved. */
 export function readStoredRaw(): Partial<TransitionData>[] {
   const raw = game.settings!.get(MODULE_ID, SETTING_KEY);
   return Array.isArray(raw) ? raw : [];
@@ -39,7 +34,6 @@ async function write(next: unknown[]): Promise<void> {
   await game.settings!.set(MODULE_ID, SETTING_KEY, next as TransitionData[]);
 }
 
-/** Every stored transition, normalized. An entry that cannot be read is skipped without affecting the others. */
 export function getAllTransitions(): TransitionData[] {
   const stored = readStoredRaw();
   const out: TransitionData[] = [];
@@ -61,7 +55,6 @@ export function getTransition(id: string): TransitionData | undefined {
   return getAllTransitions().find((t) => t.id === id);
 }
 
-/** Inserts the transition, or replaces the stored one with the same id. Other entries are untouched. */
 export async function saveTransition(data: TransitionData): Promise<void> {
   const stored = readStoredRaw();
   const index = indexOfId(stored, data.id);
@@ -69,7 +62,6 @@ export async function saveTransition(data: TransitionData): Promise<void> {
   debugLog('Transition saved', { id: data.id, name: data.name, mode: index >= 0 ? 'replaced' : 'added', total: index >= 0 ? stored.length : stored.length + 1 });
 }
 
-/** @returns false if no stored entry has this id. */
 export async function deleteTransition(id: string): Promise<boolean> {
   const stored = readStoredRaw();
   const index = indexOfId(stored, id);
@@ -79,7 +71,6 @@ export async function deleteTransition(id: string): Promise<boolean> {
   return true;
 }
 
-/** Adds a copy right after the original, with a new id and `nameSuffix` appended to the name. */
 export async function duplicateTransition(id: string, nameSuffix: string): Promise<TransitionData | undefined> {
   const original = getTransition(id);
   if (!original) return undefined;
@@ -95,7 +86,6 @@ export async function duplicateTransition(id: string, nameSuffix: string): Promi
   return copy;
 }
 
-/** Sets a transition's row color; "" restores the standard row. */
 export async function setRowColor(id: string, color: string): Promise<boolean> {
   const transition = getTransition(id);
   if (!transition) return false;
@@ -105,7 +95,6 @@ export async function setRowColor(id: string, color: string): Promise<boolean> {
   return true;
 }
 
-/** Removes every stored entry. @returns how many were removed. */
 export async function deleteAllTransitions(): Promise<number> {
   const removed = readStoredRaw().length;
   if (removed === 0) return 0;

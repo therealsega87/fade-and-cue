@@ -1,6 +1,5 @@
 import type { Direction } from '../data/transition-data.js';
 
-/** The overlay slides in from one edge and slides back out the same way. */
 const OFFSETS: Record<Direction, string> = {
   left: 'translateX(-100%)',
   right: 'translateX(100%)',

@@ -1,5 +1,3 @@
-/* ---------- Transition overlay ---------- */
-
 #fade-and-cue-overlay {
   position: fixed;
   inset: 0;
@@ -12,25 +10,20 @@
   color: #ffffff;
   font-size: 48px;
   text-align: center;
-  /* Fallback for text with no font chosen in the editor. */
   font-family: Signika, sans-serif;
 }
 
-/* Background layer: color and media together, so opacity and masks apply to both. */
 #fade-and-cue-overlay .fade-and-cue-backdrop {
   position: absolute;
   inset: 0;
   z-index: 0;
 }
 
-
-/* Soft edges: solid in the middle, transparent at the borders. */
 #fade-and-cue-overlay .fade-and-cue-backdrop.is-soft-edges {
   -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
   mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
 }
 
-/* Vignette: transparent in the middle, solid at the borders. */
 #fade-and-cue-overlay .fade-and-cue-backdrop.is-vignette {
   -webkit-mask-image: radial-gradient(ellipse at center, transparent 30%, #000 100%);
   mask-image: radial-gradient(ellipse at center, transparent 30%, #000 100%);
@@ -57,7 +50,6 @@
   margin-bottom: 0;
 }
 
-/* Visible only while the mouse is over the button itself. */
 #fade-and-cue-overlay .fade-and-cue-skip {
   position: absolute;
   top: 1.5rem;
@@ -80,8 +72,6 @@
   opacity: 1;
 }
 
-/* ---------- Shared ---------- */
-
 .fade-and-cue-hidden {
   display: none !important;
 }
@@ -93,9 +83,6 @@
   margin-right: 1rem;
 }
 
-/* ---------- Editor window ---------- */
-
-/* 750 x 750 at most (never taller than the screen); the content scrolls beyond that. */
 .application.fade-and-cue-editor {
   max-height: min(750px, 90vh);
 }
@@ -122,8 +109,6 @@
   flex: 0 1 auto;
 }
 
-/* ---------- Text editor ---------- */
-
 .fade-and-cue-prosemirror-group {
   display: flex;
   flex-direction: column;
@@ -131,16 +116,12 @@
   width: 100%;
 }
 
-/* The editor's toolbar and text area are absolutely positioned, so the editor gets its
-   width only from its container. Set it on the editor itself, which holds even when
-   another module changes the container's align-items. */
 .fade-and-cue-prosemirror-group > fade-and-cue-prose-mirror {
   align-self: stretch;
   width: 100%;
   min-width: 0;
 }
 
-/* Only the editing area's colors; Foundry styles the rest of the editor. */
 fade-and-cue-prose-mirror .editor-content.ProseMirror {
   background: #efe6d8;
   color: #1a1a1a;
@@ -148,7 +129,6 @@ fade-and-cue-prose-mirror .editor-content.ProseMirror {
   border-radius: 0 0 4px 4px;
 }
 
-/* Background media fades in once it has loaded, so a late download looks intentional. */
 #fade-and-cue-overlay .fade-and-cue-media {
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -163,10 +143,6 @@ fade-and-cue-prose-mirror .editor-content.ProseMirror {
   color: #d9a441;
 }
 
-/* ---------- Sidebar tab ----------
- * Layout comes from Foundry's own "directory flexcol" classes on the tab.
- */
-
 .fade-and-cue-sidebar-tab .directory-footer button {
   width: 100%;
 }
@@ -175,7 +151,6 @@ fade-and-cue-prose-mirror .editor-content.ProseMirror {
   flex: 1 1 0;
 }
 
-/* One row: a dark bar, name centered, like the Scenes tab without a thumbnail. */
 .fade-and-cue-sidebar-tab .directory-item {
   display: flex;
   align-items: center;
@@ -223,8 +198,6 @@ fade-and-cue-prose-mirror .editor-menu > li.fade-and-cue-divider {
 fade-and-cue-prose-mirror .editor-menu {
   flex-wrap: wrap;
 }
-
-/* ---------- Diagnostics window ---------- */
 
 .fade-and-cue-diagnostics .fade-and-cue-diagnostics-body {
   display: flex;

@@ -3,16 +3,10 @@ import { isV13 } from './compat.js';
 import { askFontSize, askTextColor } from './ui-helpers.js';
 import { applySelectionStyle, readSelectionStyle } from './v13-text-style.js';
 
-/** Top-level toolbar items removed from Foundry's default menu. */
 const EXCLUDED_ITEM_ACTIONS = new Set(['bullet-list', 'number-list', 'horizontal-rule', 'link', 'source-code', 'cancel-html']);
 
-/** Dropdowns removed entirely. */
 const EXCLUDED_DROPDOWNS = ['format', 'table'];
 
-/**
- * Final toolbar order, by button action or dropdown key; "|" is a divider.
- * Anything not listed keeps its place after these.
- */
 const TOOLBAR_ORDER_V14 = [
   'quick-strong', 'quick-em', 'quick-underline', 'quick-strikethrough',
   '|',
@@ -23,7 +17,6 @@ const TOOLBAR_ORDER_V14 = [
   'image', 'clear-formatting',
 ];
 
-/** v13 has no size dropdown or color button; the module provides its own two buttons. */
 const TOOLBAR_ORDER_V13 = TOOLBAR_ORDER_V14.map((key) => (key === 'sizes' ? 'fc-font-size' : key === 'font-color' ? 'fc-font-color' : key));
 
 export function toolbarOrder(): string[] {
@@ -40,21 +33,14 @@ const ALIGNMENTS: { key: 'left' | 'center' | 'right'; icon: string }[] = [
   { key: 'right', icon: 'fa-solid fa-align-right' },
 ];
 
-/**
- * Identifying text of a menu entry built only from its technical fields (action id,
- * untranslated title key, attributes, icon), never from displayed text, so matching
- * against it works the same in every interface language.
- */
 function technicalText(entry: DropDownEntry): string {
   return [entry.action, entry.title, JSON.stringify(entry.attrs ?? {}), entry.icon ?? ''].join(' ').toLowerCase();
 }
 
-/** Every entry under `entries` that has no children of its own. */
 function leaves(entries: DropDownEntry[]): DropDownEntry[] {
   return entries.flatMap((entry) => (entry.children?.length ? leaves(entry.children) : [entry]));
 }
 
-/** Key of a toolbar entry: its button's action, or its dropdown key for a dropdown. */
 function toolbarKey(li: HTMLElement): string | null {
   const button = li.querySelector<HTMLElement>(':scope > button');
   if (!button) return null;
@@ -66,14 +52,12 @@ function toolbarKey(li: HTMLElement): string | null {
   return null;
 }
 
-/** The keys of a drawn toolbar in display order, with "|" for dividers. */
 export function readToolbarOrder(menu: HTMLElement): string[] {
   return (Array.from(menu.children) as HTMLElement[])
     .map((li) => (li.classList.contains('fade-and-cue-divider') ? '|' : toolbarKey(li)))
     .filter((key): key is string => key !== null);
 }
 
-/** Reorders the drawn toolbar and inserts dividers. Safe to run again on a redraw. */
 export function arrangeToolbar(menu: HTMLElement): void {
   menu.querySelectorAll(':scope > li.fade-and-cue-divider').forEach((el) => el.remove());
   const entries = new Map<string, HTMLElement>();
@@ -108,19 +92,8 @@ export function arrangeToolbar(menu: HTMLElement): void {
   });
 }
 
-/**
- * Menus currently collecting their alignment entries. Foundry's own _getDropDownMenus
- * calls _getMenuItems, so while the quick buttons are being built from the dropdowns,
- * that inner call must return the base items only, or the two would recurse forever.
- * A WeakSet rather than an instance field: the base constructor runs this code before
- * any field of this subclass is initialized.
- */
 const collecting = new WeakSet<object>();
 
-/**
- * Foundry's default toolbar with some items removed, plus direct buttons for
- * bold, italic, underline, strikethrough and left/center/right alignment.
- */
 class FadeAndCueProseMirrorMenu extends foundry.prosemirror.ProseMirrorMenu {
   protected override _getMenuItems(): InstanceType<typeof foundry.prosemirror.ProseMirrorMenu>['items'] {
     const { schema } = this;
@@ -154,13 +127,6 @@ class FadeAndCueProseMirrorMenu extends foundry.prosemirror.ProseMirrorMenu {
     return [...items, ...quick];
   }
 
-  /**
-   * Copies of Foundry's own left/center/right alignment entries from the Format
-   * dropdown, reusing their commands. Searched first under the entry whose technical
-   * text mentions "align", then across all Format entries as a fallback.
-   * Not a #private method: the base class constructor calls _getMenuItems before
-   * private members of this subclass exist.
-   */
   protected _alignmentButtons(): MenuItem[] {
     collecting.add(this);
     let dropdowns: DropDowns;
@@ -207,7 +173,6 @@ class FadeAndCueProseMirrorMenu extends foundry.prosemirror.ProseMirrorMenu {
     return dropdowns;
   }
 
-  /** Font color and size buttons for v13, whose editor has neither (see v13-text-style.ts). */
   protected _v13StyleButtons(): MenuItem[] {
     const BOTH = FadeAndCueProseMirrorMenu._MENU_ITEM_SCOPES.BOTH;
     const run = async (property: 'color' | 'font-size') => {
@@ -246,13 +211,8 @@ class FadeAndCueProseMirrorMenu extends foundry.prosemirror.ProseMirrorMenu {
     ];
   }
 
-  /**
-   * Foundry's resize handler folds buttons into grouping menus this toolbar does not
-   * have. The toolbar is short enough to fit; it wraps instead (see the stylesheet).
-   */
   protected override _onResize(): void {}
 
-  /** Foundry draws dropdowns before buttons; rearrange the drawn toolbar into toolbarOrder(). */
   override render(): this {
     super.render();
     const menu = document.getElementById(this.id);

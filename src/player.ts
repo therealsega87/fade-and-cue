@@ -14,24 +14,17 @@ const EFFECT_CLASS: Partial<Record<BackgroundEffect, string>> = {
   vignette: 'is-vignette',
 };
 
-/** Longest the entrance animation waits for audio to preload. */
 const AUDIO_PRELOAD_TIMEOUT_MS = 4000;
 
 export interface PlayOptions {
-  /** Identifies a transition sent to players; absent for a local preview. */
   cueId?: string;
-  /** Called once the screen is fully covered (or when closed earlier). */
   onCovered?: () => void;
-  /** Called when this client's user closes the transition (skip button or Escape). */
   onUserClosed?: () => void;
-  /** Called once when the transition is gone from the screen, for any reason. */
   onEnded?: (reason: 'finished' | 'replaced') => void;
 }
 
-/** The overlay on screen, if any. Only one plays at a time. */
 let activeOverlay: { cueId: string | undefined; cancel: () => void; finish: () => void } | null = null;
 
-/** Closes the transition on screen, but only if it is the one identified by `cueId`. */
 export function stopActiveTransition(cueId: string): void {
   const activeId = activeOverlay?.cueId ?? null;
   const matched = activeOverlay !== null && activeId === cueId;
@@ -39,7 +32,6 @@ export function stopActiveTransition(cueId: string): void {
   if (matched) activeOverlay!.finish();
 }
 
-/** A Foundry-served path with the server's route prefix applied; full URLs are left as they are. */
 function resolveUrl(src: string): string {
   return /^(https?:|data:|blob:)/i.test(src) ? src : foundry.utils.getRoute(src);
 }
@@ -57,7 +49,6 @@ function createMediaElement(tag: 'img' | 'video', size: BackgroundSize): HTMLIma
   return el;
 }
 
-/** Keeps the media hidden until it has loaded, then fades it in. */
 function revealWhenLoaded(el: HTMLElement, loadEvent: string, kind: string, startedAt: number): void {
   el.addEventListener(
     loadEvent,
@@ -94,7 +85,6 @@ function buildBackgroundElement(data: TransitionData, startedAt: number): HTMLEl
   return video;
 }
 
-/** Waits for Foundry's audio preloader, at most AUDIO_PRELOAD_TIMEOUT_MS. Never rejects. */
 async function preloadAudio(src: string): Promise<void> {
   if (!src) return;
   const startedAt = performance.now();
@@ -115,7 +105,6 @@ async function preloadAudio(src: string): Promise<void> {
 
 type FoundrySound = foundry.audio.Sound;
 
-/** Starts the audio on Foundry's music channel, so each user's music volume applies. Local only. */
 async function startAudio(data: TransitionData): Promise<FoundrySound | null> {
   if (!data.audio.src) return null;
   try {
@@ -131,11 +120,6 @@ async function startAudio(data: TransitionData): Promise<FoundrySound | null> {
   }
 }
 
-/**
- * Plays a transition full screen on this client. While it is on screen, Foundry
- * underneath cannot be used; closing it is the only interaction, and only for the GM
- * or, when the transition allows it, for players.
- */
 export function playTransition(data: TransitionData, options: PlayOptions = {}): void {
   const { cueId, onCovered, onUserClosed, onEnded } = options;
   activeOverlay?.cancel();
@@ -149,7 +133,6 @@ export function playTransition(data: TransitionData, options: PlayOptions = {}):
   const overlay = document.createElement('div');
   overlay.id = 'fade-and-cue-overlay';
   overlay.style.pointerEvents = 'auto';
-  // Hidden until the entrance animation starts, so every animation type starts from the same state.
   overlay.style.opacity = '0';
 
   const backdrop = document.createElement('div');
@@ -166,8 +149,6 @@ export function playTransition(data: TransitionData, options: PlayOptions = {}):
   const textEl = document.createElement('div');
   textEl.className = 'fade-and-cue-text';
   textEl.innerHTML = foundry.utils.cleanHTML(data.content);
-  // The editor writes no style for left-aligned paragraphs; make it explicit so they
-  // don't inherit the overlay's centered default.
   for (const block of textEl.querySelectorAll<HTMLElement>('p, h1, h2, h3, h4, h5, h6')) {
     if (!block.style.textAlign) block.style.textAlign = 'left';
   }
@@ -201,7 +182,6 @@ export function playTransition(data: TransitionData, options: PlayOptions = {}):
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key !== 'Escape') return;
-    // Escape never reaches Foundry while a transition is on screen.
     event.preventDefault();
     event.stopImmediatePropagation();
     debugLog('Escape pressed', { canSkip }, { player: true });
@@ -284,8 +264,6 @@ export function playTransition(data: TransitionData, options: PlayOptions = {}):
       return;
     }
 
-    // Slide and wipe animate transform/clip-path, not opacity, so restore it here, in the
-    // same tick as the animation starts, before any frame is painted.
     overlay.style.opacity = '1';
     debugLog('Starting entrance animation', { ms: Math.round(performance.now() - startedAt) }, { player: true });
 

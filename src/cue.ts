@@ -6,11 +6,6 @@ import { debugLog, errorLog } from './logger.js';
 
 const SETTING_KEY = 'cue';
 
-/**
- * A message to every connected client, carried by a world setting. Only users allowed
- * to modify world settings (by default the GM and Assistant GM) can write it, and the
- * server enforces that — unlike a socket message, whose sender cannot be verified.
- */
 export interface CueMessage {
   kind: 'play' | 'stop';
   cueId: string;
@@ -28,7 +23,6 @@ function senderLabel(senderId: string): string {
   return user ? `${user.name} (isGM=${user.isGM})` : `unknown user ${senderId}`;
 }
 
-/** Activates the transition's linked scene once its delay has passed. Run by the sender only. */
 function scheduleSceneActivation(data: TransitionData): void {
   const sceneId = data.behavior.sceneId;
   if (!sceneId) return;
@@ -51,7 +45,6 @@ async function writeCue(message: CueMessage): Promise<boolean> {
   }
 }
 
-/** Validates transition data received from another client; null if it cannot be read. */
 export function readReceivedTransition(raw: unknown, cueId: string): TransitionData | null {
   try {
     return normalizeTransition((raw ?? {}) as Partial<TransitionData>);
@@ -79,7 +72,6 @@ function onCueChanged(value: unknown): void {
     return;
   }
 
-  // The sender also runs the scene change, and closing early stops it for everyone.
   playTransition(data, {
     cueId: value.cueId,
     onCovered: () => scheduleSceneActivation(data),
@@ -98,7 +90,6 @@ export function registerCueChannel(): void {
   });
 }
 
-/** Sends a transition to every connected client, this one included. GM only. */
 export async function sendTransition(data: TransitionData): Promise<void> {
   if (!game.user?.isGM) {
     ui.notifications?.warn(game.i18n!.localize('FADECUE.GMOnly'));

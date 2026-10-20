@@ -16,7 +16,6 @@ Hooks.once('init', () => {
   registerDiagnosticsMenu();
 });
 
-// The sidebar reads CONFIG.ui.sidebar.TABS while it is built, between "setup" and "ready".
 Hooks.once('setup', () => {
   registerSidebarTab();
 });

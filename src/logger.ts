@@ -12,7 +12,6 @@ function formatValue(value: unknown): string {
   }
 }
 
-/** One plain line: "message | key=value, key=value". Readable in an exported console log. */
 function formatLine(message: string, details?: Details): string {
   if (!details) return `[${MODULE_TITLE}] ${message}`;
   const parts = Object.entries(details).map(([key, value]) => `${key}=${formatValue(value)}`);
@@ -28,14 +27,9 @@ export function isDebug(): boolean {
 }
 
 export interface LogOptions {
-  /** Also printed for players. Only for lines that reveal no transition content. */
   player?: boolean;
 }
 
-/**
- * Printed only when the "Enable debug logging" setting is on. For players, only lines
- * marked `player: true` are printed, so their console never shows transition content.
- */
 export function debugLog(message: string, details?: Details, options: LogOptions = {}): void {
   if (!isDebug()) return;
   if (!(game.user?.isGM ?? true) && !options.player) return;
@@ -45,7 +39,6 @@ export function debugLog(message: string, details?: Details, options: LogOptions
 const MAX_RECENT_ERRORS = 20;
 const recentErrors: string[] = [];
 
-/** Always printed, and kept (the last MAX_RECENT_ERRORS) for the diagnostics report. */
 export function errorLog(message: string, error?: unknown, details?: Details): void {
   const line = formatLine(message, { ...details, ...(error === undefined ? {} : { error }) });
   recentErrors.push(`${new Date().toISOString()} ${line}`);

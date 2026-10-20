@@ -8,7 +8,6 @@ export interface SceneFolderGroup {
   scenes: SceneOption[];
 }
 
-/** World scenes grouped by folder, for the "activate scene" select. */
 export function getScenesByFolder(): SceneFolderGroup[] {
   const noFolder = game.i18n!.localize('FADECUE.Editor.SceneNoFolder');
   const groups = new Map<string, SceneOption[]>();

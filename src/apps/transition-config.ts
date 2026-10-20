@@ -11,12 +11,10 @@ const TAB_IDS = ['animation', 'text', 'background', 'timing'];
 
 export const EDITOR_ID_PREFIX = 'fade-and-cue-transition-config-';
 
-/** Window id of the editor for one transition. */
 export function appIdFor(transitionId: string): string {
   return `${EDITOR_ID_PREFIX}${transitionId}`;
 }
 
-/** Tabbed editor for a single transition. */
 export class TransitionConfig extends HandlebarsApplicationMixin(ApplicationV2) {
   transition: TransitionData;
 
@@ -121,7 +119,6 @@ export class TransitionConfig extends HandlebarsApplicationMixin(ApplicationV2) 
     this.#bindSceneDelayWarning(form);
   }
 
-  /** Shows or hides fields that only apply to some option values. */
   #bindVisibility(form: HTMLFormElement): void {
     const toggleOn = (trigger: HTMLSelectElement | HTMLInputElement | null, update: () => void) => {
       if (!trigger) return;
@@ -153,7 +150,6 @@ export class TransitionConfig extends HandlebarsApplicationMixin(ApplicationV2) 
     toggleOn(autoMatch, () => setHidden('.fade-and-cue-hold', autoMatch!.checked));
   }
 
-  /** Warns when a see-through background is combined with a scene change: players would see the map change. */
   #bindSceneWarning(form: HTMLFormElement): void {
     const scene = form.querySelector('select[name="behavior.sceneId"]') as HTMLSelectElement | null;
     const effect = form.querySelector('select[name="background.effect"]') as HTMLSelectElement | null;
@@ -173,11 +169,6 @@ export class TransitionConfig extends HandlebarsApplicationMixin(ApplicationV2) 
     update();
   }
 
-  /**
-   * Warns when the scene change delay (a module setting) is longer than the hold time:
-   * the transition would leave before the scene changes and players would see the switch.
-   * Not shown when the hold follows the audio length, which is only known while playing.
-   */
   #bindSceneDelayWarning(form: HTMLFormElement): void {
     const scene = form.querySelector<HTMLSelectElement>('select[name="behavior.sceneId"]');
     const hold = form.querySelector<HTMLInputElement>('input[name="timing.hold"]');
@@ -202,7 +193,6 @@ export class TransitionConfig extends HandlebarsApplicationMixin(ApplicationV2) 
     update();
   }
 
-  /** The form's current values as a normalized TransitionData, for both Preview and Save. */
   #readFormData(): TransitionData {
     const formData = new foundry.applications.ux.FormDataExtended(this.element as unknown as HTMLFormElement);
     const expanded = foundry.utils.expandObject(formData.object);
@@ -228,7 +218,6 @@ export class TransitionConfig extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 }
 
-/** Opens the editor for a saved transition, or for a new one when no id is given. */
 export function openTransitionEditor(id?: string): void {
   if (id) {
     const existing = foundry.applications.instances.get(appIdFor(id));

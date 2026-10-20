@@ -5,7 +5,6 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 const APP_ID = 'fade-and-cue-diagnostics';
 
-/** Runs the diagnostics when opened and shows the report, with copy, download and playback test. */
 export class DiagnosticsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   #report: DiagnosticsReport | null = null;
   #playback: Check[] | null = null;
@@ -82,13 +81,11 @@ export class DiagnosticsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 }
 
-/** Opens the diagnostics window, running the checks. */
 export function openDiagnostics(): void {
   const existing = foundry.applications.instances.get(APP_ID) as DiagnosticsApp | undefined;
   void (existing ?? new DiagnosticsApp()).render({ force: true });
 }
 
-/** Console entry point: opens the window, which runs the checks and prints the report. */
 export async function diagnose(): Promise<string> {
   const existing = foundry.applications.instances.get(APP_ID) as DiagnosticsApp | undefined;
   const app = existing ?? new DiagnosticsApp();
@@ -96,7 +93,6 @@ export async function diagnose(): Promise<string> {
   return app.text;
 }
 
-/** The "Run diagnostics" button in the module settings, GM only. */
 export function registerDiagnosticsMenu(): void {
   game.settings!.registerMenu('fade-and-cue', 'diagnostics', {
     name: 'FADECUE.Settings.Diagnostics.Name',

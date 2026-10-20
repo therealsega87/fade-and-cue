@@ -23,7 +23,6 @@ const AUDIO_TIMEOUT_MS = 4000;
 const PLAYBACK_TIMEOUT_MS = 10000;
 const ROLE_NAMES: Record<number, string> = { 1: 'Player', 2: 'Trusted', 3: 'Assistant GM', 4: 'Gamemaster' };
 
-/** First 8 characters of an id: enough to identify a transition without revealing its name. */
 function shortId(id: unknown): string {
   return typeof id === 'string' ? id.slice(0, 8) : '(no id)';
 }
@@ -38,7 +37,6 @@ function isFn(value: unknown): boolean {
   return typeof value === 'function';
 }
 
-/** Every Foundry API the module relies on, checked for presence in the running version. */
 function compatibilityChecks(): Check[] {
   const f = foundry as unknown as Loose;
   const g = game as unknown as Loose;
@@ -139,7 +137,6 @@ function interfaceChecks(): Check[] {
   return checks;
 }
 
-/** CSS rules from other modules' stylesheets that match the given elements. */
 function foreignCssRules(elements: Record<string, Element | null>): string[] {
   const lines: string[] = [];
   const walk = (rules: CSSRuleList, source: string, name: string, el: Element) => {
@@ -173,7 +170,6 @@ function foreignCssRules(elements: Record<string, Element | null>): string[] {
   return lines;
 }
 
-/** Position of the Fade & Cue tab in the sidebar as drawn on screen. */
 function drawnTabCheck(): Check[] {
   const tabs = [...new Set(Array.from(document.querySelectorAll<HTMLElement>('#sidebar-tabs [data-tab]')).map((el) => el.dataset.tab ?? ''))];
   const index = tabs.indexOf(MODULE_ID);
@@ -188,11 +184,6 @@ function drawnTabCheck(): Check[] {
   ];
 }
 
-/**
- * Builds a hidden editor inside the same structure as the editor window, then checks
- * its toolbar buttons and its shape. On a broken shape, lists other modules' CSS rules
- * that apply to it.
- */
 async function editorCheck(): Promise<Check[]> {
   const host = document.createElement('form');
   host.className = 'application fade-and-cue-editor';
@@ -347,7 +338,6 @@ export interface DiagnosticsReport {
   sections: { title: string; checks: Check[] }[];
 }
 
-/** Runs every check. Reads and tests only: nothing is saved, sent or changed. */
 export async function runDiagnostics(): Promise<DiagnosticsReport> {
   return {
     createdAt: new Date(),
@@ -364,7 +354,6 @@ export async function runDiagnostics(): Promise<DiagnosticsReport> {
   };
 }
 
-/** Plays a built-in sample transition on this screen only and checks each phase. */
 export async function runPlaybackTest(): Promise<Check[]> {
   const sample = createDefaultTransition('Diagnostics test');
   sample.content = '<p>Fade &amp; Cue — playback test</p>';
@@ -401,7 +390,6 @@ export async function runPlaybackTest(): Promise<Check[]> {
   return checks;
 }
 
-/** The report as plain text, ready to paste into a bug report. */
 export function formatReport(report: DiagnosticsReport, extra: { title: string; checks: Check[] }[] = []): string {
   const sections = [...report.sections, ...extra];
   const all = sections.flatMap((s) => s.checks);

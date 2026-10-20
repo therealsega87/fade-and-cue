@@ -1,8 +1,3 @@
-/**
- * Confirmation dialog for destructive actions (delete, delete all, ...).
- * "No" is always the default button (the one Enter triggers), so an
- * accidental keypress never deletes data.
- */
 export async function confirmDestructive(title: string, bodyHtml: string): Promise<boolean> {
   const result = await foundry.applications.api.DialogV2.confirm({
     window: { title },
@@ -13,12 +8,10 @@ export async function confirmDestructive(title: string, bodyHtml: string): Promi
   return result === true;
 }
 
-/** Makes text safe to drop into an HTML string: escapes & < >. */
 export function escapeHtml(text: string): string {
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-/** Asks for a text color (v13 editor). @returns "#rrggbb", "" to remove, or null if cancelled. */
 export async function askTextColor(current: string): Promise<string | null> {
   const t = (key: string) => game.i18n!.localize(`FADECUE.${key}`);
   const result = await foundry.applications.api.DialogV2.wait({
@@ -42,7 +35,6 @@ export async function askTextColor(current: string): Promise<string | null> {
   return typeof result === 'string' ? result : null;
 }
 
-/** Asks for a font size in pixels (v13 editor). @returns e.g. "32px", "" to remove, or null if cancelled. */
 export async function askFontSize(current: string): Promise<string | null> {
   const t = (key: string) => game.i18n!.localize(`FADECUE.${key}`);
   const value = parseInt(current, 10) || 48;
@@ -69,12 +61,6 @@ export async function askFontSize(current: string): Promise<string | null> {
   return typeof result === 'string' ? result : null;
 }
 
-/**
- * Asks for a row's background color with Foundry's own color-picker element.
- * @param current The row's current color ("" for none).
- * @returns a "#rrggbb" to set, "" to go back to the standard dark row, or
- *   null if the dialog was cancelled or closed without a choice.
- */
 export async function askRowColor(current: string): Promise<string | null> {
   const DEFAULT_START = '#0b0a13';
   const start = current || DEFAULT_START;

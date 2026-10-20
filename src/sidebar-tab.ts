@@ -29,7 +29,6 @@ function warnNotFound(): void {
   ui.notifications?.warn(game.i18n!.localize('FADECUE.TransitionNotFound'));
 }
 
-/** One entry of the row's right-click menu, run with that row's transition id. */
 function menuEntry(labelKey: string, icon: string, action: (id: string) => void | Promise<void>) {
   return contextMenuEntry(`FADECUE.Sidebar.Menu.${labelKey}`, icon, (target) => {
     const id = idFromTarget(target);
@@ -42,7 +41,6 @@ function menuEntry(labelKey: string, icon: string, action: (id: string) => void 
   });
 }
 
-/** The row's right-click menu entries, in order. */
 export function rowMenuEntries() {
   return [
     menuEntry('Edit', 'fa-solid fa-pen-to-square', editRow),
@@ -53,12 +51,10 @@ export function rowMenuEntries() {
   ];
 }
 
-/** Opens the editor on the given transition's id. */
 function editRow(id: string): void {
   openTransitionEditor(id);
 }
 
-/** Downloads the transition as a JSON file. */
 function exportRow(id: string): void {
   const transition = getTransition(id);
   if (!transition) {
@@ -68,13 +64,11 @@ function exportRow(id: string): void {
   exportTransition(transition);
 }
 
-/** Adds a copy of the transition right after it in the list. */
 async function duplicateRow(id: string): Promise<void> {
   const copy = await duplicateTransition(id, game.i18n!.localize('FADECUE.Sidebar.CopySuffix'));
   if (!copy) warnNotFound();
 }
 
-/** Asks for the row's color and applies it; cancelling changes nothing. */
 async function recolorRow(id: string): Promise<void> {
   const transition = getTransition(id);
   if (!transition) {
@@ -86,10 +80,6 @@ async function recolorRow(id: string): Promise<void> {
   await setRowColor(id, color);
 }
 
-/**
- * Deletes a transition, after asking. Closes an editor open on it first, so
- * saving that editor afterwards cannot bring the transition back by accident.
- */
 async function deleteRow(id: string): Promise<void> {
   const transition = getTransition(id);
   if (!transition) {
@@ -105,19 +95,12 @@ async function deleteRow(id: string): Promise<void> {
   await deleteTransition(id);
 }
 
-/**
- * The Fade & Cue tab in Foundry's sidebar. Header, list and footer are separate parts
- * using Foundry's own directory classes, so Foundry's stylesheet handles layout and
- * showing/hiding the tab, as for its built-in tabs.
- */
 class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab) {
   static tabName = TAB_ID;
 
-  /** The single instance, so the list can be refreshed when the data changes. */
   static #instance: FadeAndCueSidebarTab | null = null;
 
   static DEFAULT_OPTIONS = {
-    // No "id": AbstractSidebarTab derives it from tabName.
     classes: ['directory', 'flexcol', 'fade-and-cue-sidebar-tab'],
     window: {
       title: 'FADECUE.Sidebar.Title',
@@ -147,7 +130,6 @@ class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab
     FadeAndCueSidebarTab.#instance = this;
   }
 
-  /** Re-renders the tab, but only if it is actually showing — never force it into view. */
   static status(): { created: boolean; rendered: boolean } {
     const instance = FadeAndCueSidebarTab.#instance;
     return { created: instance !== null, rendered: instance?.rendered ?? false };
@@ -159,7 +141,6 @@ class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab
 
   override async _prepareContext(options: any) {
     const base = await super._prepareContext(options);
-    // Sorted by name.
     const transitions = getAllTransitions()
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((t) => ({
@@ -172,13 +153,11 @@ class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab
 
   override async _onFirstRender(context: any, options: any): Promise<void> {
     await super._onFirstRender(context, options);
-    // Foundry's own right-click menu, bound once: it survives later redraws.
     this._createContextMenu(() => rowMenuEntries() as never, '.directory-item[data-entry-id]', { fixed: true, jQuery: false });
   }
 
   override async _onRender(context: object, options: object): Promise<void> {
     await super._onRender(context, options);
-    // The parts were just redrawn, so the search box is a new element: bind again.
     if (this.#searchBound) this.#search?.unbind();
     this.#search = new SearchFilter({
       inputSelector: 'input[name="search"]',
@@ -189,18 +168,14 @@ class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab
     this.#searchBound = true;
   }
 
-  /** Shows the rows whose name matches the query and hides the others. */
   #filterRows(query: string, rgx: RegExp, content: HTMLElement | null): void {
     const root = content ?? (this.element as unknown as HTMLElement);
     root.querySelectorAll<HTMLElement>('.directory-item').forEach((row) => {
       const name = row.querySelector('.entry-name')?.textContent ?? '';
       const match = !query || SearchFilter.testQuery(rgx, name);
-      // '' gives the display value back to the stylesheet; a hardcoded value would override it.
       row.style.display = match ? '' : 'none';
     });
   }
-
-
 
   static #onCreate(this: FadeAndCueSidebarTab): void {
     openTransitionEditor();
@@ -230,7 +205,6 @@ class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab
     else warnNotFound();
   }
 
-  /** Deletes every transition after asking, closing any open editor first. */
   static async #onDeleteAll(this: FadeAndCueSidebarTab): Promise<void> {
     const count = getAllTransitions().length;
     if (count === 0) return;
@@ -254,10 +228,6 @@ class FadeAndCueSidebarTab extends HandlebarsApplicationMixin(AbstractSidebarTab
   }
 }
 
-/**
- * Inserts an entry into a sidebar TABS record right after another tab (by
- * id), without disturbing the relative order of everything else.
- */
 function insertAfter<T>(tabs: Record<string, T>, id: string, config: T, afterId: string): Record<string, T> {
   const entries = Object.entries(tabs).filter(([key]) => key !== id) as [string, T][];
   const index = entries.findIndex(([key]) => key === afterId);
@@ -266,10 +236,8 @@ function insertAfter<T>(tabs: Record<string, T>, id: string, config: T, afterId:
   return Object.fromEntries(entries);
 }
 
-/** Registers the Fade & Cue sidebar tab, right after "scenes". */
 export function registerSidebarTab(): void {
   try {
-    // fvtt-types does not model third-party sidebar tabs on CONFIG.ui yet.
     const tabs = CONFIG.ui.sidebar.TABS as unknown as Record<string, unknown>;
     const tabConfig = {
       tooltip: 'FADECUE.Sidebar.Tooltip',
@@ -286,12 +254,10 @@ export function registerSidebarTab(): void {
   }
 }
 
-/** Whether the tab has been created and drawn, for the diagnostics report. */
 export function sidebarTabStatus(): { created: boolean; rendered: boolean } {
   return FadeAndCueSidebarTab.status();
 }
 
-/** Re-renders the sidebar tab's list, e.g. after a transition is saved elsewhere. */
 export function refreshSidebarTab(): void {
   FadeAndCueSidebarTab.refresh();
 }

@@ -1,10 +1,3 @@
-/**
- * Font color and size for Foundry v13, whose editor has no color or size marks.
- * v13's generic "span" mark keeps any attributes in `_preserve` and writes them back
- * to the HTML, so both are stored as a style on a span: the same HTML v14 produces.
- */
-
-/** The parts of a ProseMirror view used here; typed loosely to work across versions. */
 interface EditorViewLike {
   state: any;
   dispatch(tr: any): void;
@@ -29,7 +22,6 @@ function serializeStyle(map: Map<string, string>): string {
   return [...map].map(([key, value]) => `${key}: ${value}`).join('; ');
 }
 
-/** `style` with one property set, or removed when `value` is empty. */
 export function setStyleProperty(style: string | undefined, property: StyleProperty, value: string): string {
   const map = parseStyle(style);
   if (value) map.set(property, value);
@@ -37,7 +29,6 @@ export function setStyleProperty(style: string | undefined, property: StylePrope
   return serializeStyle(map);
 }
 
-/** The property's value on the first selected text, or "" if none. */
 export function readSelectionStyle(view: EditorViewLike, property: StyleProperty): string {
   const { state } = view;
   const spanType = state.schema.marks.span;
@@ -51,10 +42,6 @@ export function readSelectionStyle(view: EditorViewLike, property: StyleProperty
   return found;
 }
 
-/**
- * Sets the property on the selected text, keeping any other style and attributes
- * already on each piece of it. Returns false, changing nothing, if nothing is selected.
- */
 export function applySelectionStyle(view: EditorViewLike, property: StyleProperty, value: string): boolean {
   const { state } = view;
   const spanType = state.schema.marks.span;
