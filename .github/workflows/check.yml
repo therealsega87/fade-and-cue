@@ -1,0 +1,66 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npx tsc
+
+      - name: Check manifest
+        run: |
+          node --input-type=module -e '
+          import fs from "node:fs";
+          const m = JSON.parse(fs.readFileSync("module.json", "utf8"));
+          const p = JSON.parse(fs.readFileSync("package.json", "utf8"));
+          const errors = [];
+          if (m.id !== "fade-and-cue") errors.push(`id is ${m.id}`);
+          if (m.version !== p.version) errors.push(`module.json ${m.version} differs from package.json ${p.version}`);
+          if (!m.download.endsWith(`/releases/download/v${m.version}/fade-and-cue.zip`)) errors.push(`download URL does not match v${m.version}`);
+          if (!m.manifest.endsWith("/releases/latest/download/module.json")) errors.push("manifest URL is not the latest-release link");
+          const files = [...m.esmodules, ...m.styles, ...m.languages.map(l => l.path), m.license];
+          for (const f of files) if (!fs.existsSync(f)) errors.push(`missing file ${f}`);
+          for (const l of m.languages) JSON.parse(fs.readFileSync(l.path, "utf8"));
+          if (!fs.readFileSync("CHANGELOG.md", "utf8").includes(`## ${m.version}`)) errors.push(`CHANGELOG.md has no ${m.version} entry`);
+          if (errors.length) { console.error(errors.join("\n")); process.exit(1); }
+          console.log(`module.json ${m.version} OK`);
+          '
+
+      - name: Check release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION=$(node -p 'require("./module.json").version')
+          test "$TAG" = "v$VERSION" || { echo "Tag $TAG does not match v$VERSION"; exit 1; }
+          ASSETS=$(gh release view "$TAG" --json assets --jq '.assets[].name')
+          echo "$ASSETS"
+          echo "$ASSETS" | grep -qx 'fade-and-cue.zip' || { echo "fade-and-cue.zip not attached"; exit 1; }
+          echo "$ASSETS" | grep -qx 'module.json' || { echo "module.json not attached"; exit 1; }
+          gh release download "$TAG" -p module.json -O released.json
+          diff module.json released.json || { echo "Attached module.json differs from the repository"; exit 1; }
+          gh release download "$TAG" -p fade-and-cue.zip -O released.zip
+          unzip -l released.zip | grep -q 'fade-and-cue/module.json' || { echo "Zip has no fade-and-cue/module.json"; exit 1; }
+          unzip -l released.zip | grep -q 'fade-and-cue/dist/main.js' || { echo "Zip has no dist/main.js"; exit 1; }
+          echo "Release $TAG OK"
